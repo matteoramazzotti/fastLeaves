@@ -10,13 +10,14 @@ ui <- fluidPage(
 
 	sidebarLayout(
 		sidebarPanel(width=2,
-			selectInput(inputId="treefile","Tree file:", choices = c("Full","Unique")),
-			selectInput(inputId="treetype","Tree type:", choices = c("cladogram","radial","unrooted","fan")),
+			selectInput(inputId="treefile","File:", choices = c("Full","Unique")),
+			selectInput(inputId="treetype","Type:", choices = c("cladogram","radial","unrooted","fan")),
 			numericInput(inputId="labsize","Label size:",1,step="0.1",width=100),
+			numericInput(inputId="edgecol","Branch transparency %:",value=30,max=100,min=10,width=180),
 			numericInput(inputId="wsize","Width:",value=1000,step=10,width=100),
 			numericInput(inputId="hsize","Height:",value=2000,step=10,width=100),
 			textAreaInput(inputId="deltips","Filter strains*", width = 150, height = 100),
-			textAreaInput(inputId="colors","Color strain*", width = 150, height = 100),
+			textAreaInput(inputId="colors","Color strains*", width = 150, height = 100),
 			"*add search_keys one per line, prepend ! to exclude",
 			"*format to use: search_key|color"
 		),
@@ -78,7 +79,7 @@ server <- function(input, output, session) {
 		c(input$treetype,input$labsize,input$wsize,input$hsize)
 	})
 	output$plot<-renderPlot({	
-		plot(dropTips(),main="",type=input$treetype,tip.color=getColors(),cex=input$labsize,no.margin = TRUE)
+		plot(dropTips(),main="",type=input$treetype,edge.color=rgb(0,0,0,max=1,alpha=input$edgecol/100),tip.color=getColors(),cex=input$labsize,no.margin = TRUE)
 	},
 	width= reactive({input$wsize}),
 	height= reactive({input$hsize}),
@@ -86,4 +87,3 @@ server <- function(input, output, session) {
 }
 
 shinyApp(ui, server)
-
